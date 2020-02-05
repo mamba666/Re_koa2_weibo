@@ -5,6 +5,10 @@ const json = require('koa-json')
 const onerror = require('koa-onerror')
 const bodyparser = require('koa-bodyparser')
 const logger = require('koa-logger')
+const session = require('koa-generic-session')
+const redisStore = require('koa-redis')
+
+const {REDIS_CONF}=require("./conf/db")
 
 const index = require('./routes/index')
 const users = require('./routes/users')
@@ -23,6 +27,31 @@ app.use(require('koa-static')(__dirname + '/public'))
 app.use(views(__dirname + '/views', {
   extension: 'ejs'
 }))
+
+//koa2配置session
+//session如果不手动去使用的话，就不会去启用redis服务器
+//这是密钥，因为需要将cookie传进来的信息加密
+app.keys=["UIsdf_7878#$"]
+app.use(session({
+  //设置cookie的name，默认是koa.sid
+  key:"weibo.sid",
+  //设置redis key的前缀，默认是koa:sess:
+  prefix:"weibo:sess:",
+  //配置cookie
+  cookie:{
+    // 表示生成的cookie的路径，这里表示在所有根路径下
+    path:"/",
+    httpOnly:true,
+    // 单位：毫秒--过期时间
+    maxAge:24*60*60*1000
+  },
+  // ttl:24*60*60*1000,  ttl是redis过期配置，如果不写默认和maxAge一样
+  store:redisStore({
+    // redis的配置
+    all:`${REDIS_CONF.host}:${REDIS_CONF.port}`
+  })
+}))
+
 
 // logger
 // app.use(async (ctx, next) => {
