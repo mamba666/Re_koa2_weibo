@@ -12,7 +12,8 @@ const {REDIS_CONF}=require("./conf/db")
 const { isProd } = require('./utils/env')
 
 const index = require('./routes/index')
-const users = require('./routes/users')
+const userAPIRouter = require('./routes/api/user')
+const userViewRouter = require('./routes/view/user')
 const errorViewRouter = require('./routes/view/error')
 
 // error handler
@@ -63,7 +64,8 @@ app.use(session({
 
 // routes
 app.use(index.routes(), index.allowedMethods())
-app.use(users.routes(), users.allowedMethods())
+app.use(userAPIRouter.routes(), userAPIRouter.allowedMethods())
+app.use(userViewRouter.routes(), userViewRouter.allowedMethods())
 // 404要注册在最后面
 app.use(errorViewRouter.routes(), errorViewRouter.allowedMethods())
 

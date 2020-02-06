@@ -4,24 +4,40 @@
  * @module /utils/env
  * @author edison
  */
+const { isProd } = require('../utils/env')
 
-const {isProd}=require("../utils/env")
-
-//配置数据库
-let REDIS_CONF={
-    port:6379,
-    host:"127.0.0.1"
+let REDIS_CONF = {
+    port: 6379,
+    host: '127.0.0.1'
 }
 
+let MYSQL_CONF = {
+    host: 'localhost',
+    user: 'root',
+    password: 'lwjkkkbbb1997',
+    port: '3306',
+    database: 'koa2_weibo_db'
+}
 
-//判断线上还是线下，以选择使用何种配置数据库
-if(isProd){
-    REDIS_CONF={
-        port:6379,
-        host:"127.0.0.1"
+if (isProd) {
+    REDIS_CONF = {
+        // 线上的 redis 配置
+        port: 6379,
+        host: '127.0.0.1'
     }
+
+    MYSQL_CONF = {
+        // 线上的 mysql 配置
+        host: 'localhost',
+        user: 'root',
+        password: 'lwjkkkbbb1997',
+        port: '3306',
+        database: 'koa2_weibo_db'
+    }
+    
 }
 
-module.exports={
-    REDIS_CONF
+module.exports = {
+    REDIS_CONF,
+    MYSQL_CONF
 }
