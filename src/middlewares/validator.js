@@ -1,5 +1,6 @@
 /**
- * @description 验证格式的中间件
+ * @description 验证格式的中间件 view中间件
+ * @author edison
  */
 
 const { ErrorModel } = require('../model/ResModel')
