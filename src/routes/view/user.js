@@ -4,12 +4,13 @@
  */
 
 const router = require('koa-router')()
+const { loginRedirect } = require('../../middlewares/loginChecks')
 
 /**
  * 获取登录信息
  * @param {Object} ctx 
  */
-function getLogininfo(ctx){
+function getLoginInfo(ctx){
     let data={
         // 默认未登录
         isLogin:false
@@ -20,17 +21,20 @@ function getLogininfo(ctx){
             isLogin:true,
             userName:userInfo.userName
         }
-    }
-
+    }   
     return data
 }
 
 router.get('/login', async(ctx, next)=>{
-    await ctx.render('login',getLogininfo(ctx))
+    await ctx.render('login',getLoginInfo(ctx))
 })
 
 router.get('/register', async(ctx, next)=>{
-    await ctx.render('register',getLogininfo(ctx))
+    await ctx.render('register',getLoginInfo(ctx))
+})
+
+router.get('/setting',loginRedirect,async(ctx,next)=>{
+    await ctx.render('setting',ctx.session.userInfo)
 })
 
 
