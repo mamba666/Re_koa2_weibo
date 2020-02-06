@@ -3,6 +3,7 @@
  * @author edison
  */
 
-module.exports={
-    DEFAULT_PICTURE="https://s2.ax1x.com/2020/02/06/1y13t0.jpg"
+
+module.exports = {
+    DEFAULT_PICTURE: 'https://dwz.cn/rnTnftZs'
 }
