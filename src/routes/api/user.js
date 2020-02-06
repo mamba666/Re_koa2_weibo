@@ -4,12 +4,12 @@
  */
 
 
-const router=require('koa-router')()
-const {isExist,register,login,deleteCurUser}=require("../../controller/user")
+const router = require('koa-router')()
+const { isExist, register, login, deleteCurUser } = require('../../controller/user')
 const userValidate = require('../../validator/user')
 const { genValidator } = require('../../middlewares/validator')
-const {isTest}=require("../../utils/env")
-const {loginCheck}=require("../../middlewares/loginCkecks")
+const { isTest } = require('../../utils/env')
+const { loginCheck } = require('../../middlewares/loginChecks')
 
 router.prefix('/api/user')
 
@@ -37,7 +37,8 @@ router.post('/login',async(ctx,next)=>{
 })
 
 //单元测试用
-router.post('/delete',loginRedirect,async(ctx,next)=>{
+router.post('/delete', loginCheck,async(ctx,next)=>{
+    // 必须要判断是否为线上环境
     if(isTest){
         const {userName}=ctx.session.userInfo
         ctx.body=await deleteCurUser(userName)

@@ -1,6 +1,6 @@
 const router = require('koa-router')()
 
-const {loginRedirect, loginCheck}=require("../middlewares/loginCkecks.js")
+const {loginRedirect, loginCheck}=require("../middlewares/loginChecks")
 
 router.get('/',loginRedirect,async (ctx, next) => {
   await ctx.render('index', {
@@ -20,7 +20,7 @@ router.get('/',loginRedirect,async (ctx, next) => {
   })
 })
 
-router.get('/json', loginCheck,async (ctx, next) => {
+router.get('/json',loginCheck,async (ctx, next) => {
   // ctx.session就可以获取当前用户进入json页面的session
   // ctx.session中初始只存了cookie，所以可以调用ctx.session.cookie
   // 这里的ctx.session.viewNum是自己定义的一个session属性

@@ -43,12 +43,12 @@ async function getUserInfo(userName, password) {
  * @description 因为这里是services层，所以只要管好数据层面就行，这也是为社么传入这么参数的原因
  * @param {string|number} param0 userName,password,gender,nickName
  */
-async function createUser({userName,password,gender=3,nickName}){
-    const result=await User.create({
+async function createUser({ userName, password, gender = 3, nickName }) {
+    const result = await User.create({
         userName,
         password,
         // 防止不传昵称
-        nickName:nickName?nickName:userName,
+        nickName: nickName ? nickName : userName,
         gender
     })
     return result.dataValues
@@ -58,15 +58,15 @@ async function createUser({userName,password,gender=3,nickName}){
  * 删除用户
  * @param {string} userName 数据库层面删除用户
  */
-async function deleteUser(userName){
-    const result=await User.destroy({
-        where:{
+async function deleteUser(userName) {
+    const result = await User.destroy({
+        where: {
             userName
         }
     })
-    // resul是删除的行数
+    // result 删除的行数
     // 返回一个boolean
-    return result>0
+    return result > 0
 }
 
 
