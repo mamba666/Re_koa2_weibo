@@ -1,22 +1,25 @@
 /**
- * @description 单元测试db/model/index(user)，目的是看user中是否有model中定义的属性
+ * @description user model test
  * @author edison
  */
 
-const {User}=require("../../src/db/model/index")
+const { User } = require('../../src/db/model/index')
 
-test("user中属性是否符合当初定义的预期",()=>{
-    // build会构建一个内存的User实例，但不会提交到数据库
-    const user=User.build({
-        userName:"edison",
-        password:"123",
-        nickName:"edison",
-        picture:"/xxx.png",
-        city:"唐山"
+test('User 模型的各个属性，符合预期', () => {
+    // build 会构建一个内存的 User 实例，但不会提交到数据库中
+    const user = User.build({
+        userName: 'zhangsan',
+        password: 'p123123',
+        nickName: '张三',
+        // gender: 1,
+        picture: '/xxx.png',
+        city: '北京'
     })
-    expect(user.userName).toBe("edison")
-    expect(user.password).toBe("123")
-    expect(user.nickName).toBe("edison")
-    expect(user.picture).toBe("/xxx.png")
-    expect(user.city).toBe("唐山")
+    // 验证各个属性
+    expect(user.userName).toBe('zhangsan')
+    expect(user.password).toBe('p123123')
+    expect(user.nickName).toBe('张三')
+    expect(user.gender).toBe(3) // 测试 gender 默认值
+    expect(user.picture).toBe('/xxx.png')
+    expect(user.city).toBe('北京')
 })

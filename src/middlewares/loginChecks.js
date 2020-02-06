@@ -12,17 +12,17 @@ const { loginCheckFailInfo } = require('../model/ErrorInfo')
  * @param {Object} ctx ctx
  * @param {fun} next next
  */
-async function loginCheck(ctx,next){
-    //如果判断为真，说明在controller中已经登录成功了。
-    // 为了安全起见，做两层校验
-    if(ctx.session&&ctx.session.userInfo){
-        await next()
-        return
+async function loginCheck(ctx, next) {
+        //如果判断为真，说明在controller中已经登录成功了。
+        // 为了安全起见，做两层校验
+        if (ctx.session && ctx.session.userInfo) {
+            // 已登录
+            await next()
+            return
+        }
+        // 未登录
+        ctx.body = new ErrorModel(loginCheckFailInfo)
     }
-    //未登录
-    ctx.body=new ErrorModel(loginCheckFailInfo)
-
-}
 
 /**
  * 页面 登录校验
@@ -42,7 +42,7 @@ async function loginRedirect(ctx,next){
 }
 
 
-module.exports={
+module.exports = {
     loginCheck,
     loginRedirect
 }

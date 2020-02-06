@@ -1,10 +1,9 @@
 /**
- * @description 使用supertest测试http请求
+ * @description jest server
  * @author edison
  */
 
-const request=require("supertest")
-const server=require("../src/app").callback()
+const request = require('supertest')
+const server = require('../src/app').callback()
 
-module.exports=request(server)
-
+module.exports = request(server)
