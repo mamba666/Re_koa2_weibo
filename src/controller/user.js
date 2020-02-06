@@ -3,14 +3,15 @@
  * @author edison
  */
 
-const {getUserInfo,createUser,deleteUser}=require("../services/user")
+const {getUserInfo,createUser,deleteUser,updateUser}=require("../services/user")
 const {SuccessModel,ErrorModel}=require("../model/ResModel")
 const {
     registerUserNameNotExistInfo,
     registerUserNameExistInfo,
     registerFailInfo,
     loginFailInfo,
-    deleteUserFailInfo
+    deleteUserFailInfo,
+    changeInfoFailInfo
 }=require("../model/ErrorInfo")
 const doCrypto=require("../utils/cryp")
 
@@ -96,9 +97,44 @@ async function deleteCurUser(userName) {
         return new ErrorModel(deleteUserFailInfo)
     }
 
+/**
+ * @description ctx传进来是因为修改了用户信息也需要更改session
+ * @param {object} ctx 
+ * @param {string} param1 nickName,city,picture
+ */
+async function changeInfo(ctx,{nickName,city,picture}){
+    // 既然是修改个人信息,那么也需要直到修改的是谁的个人信息
+    // controller的业务逻辑
+    const {userName}=ctx.session.userInfo
+    if(!nickName){
+        nickName=userName
+    }
+    // services 修改数据库
+    const result=await updateUser(
+        {
+            newNickName:nickName,
+            newCity:city,
+            newPicture:picture
+        },
+        {userName}
+    )
+    if(result){
+        //修改存储用户信息的session
+        Object.assign(ctx.session.userInfo,{
+            nickName,
+            city,
+            picture
+        })
+        return new SuccessModel()
+    }
+    return new ErrorModel(changeInfoFailInfo)
+}
+
+
 module.exports={
     isExist,
     register,
     login,
-    deleteCurUser
+    deleteCurUser,
+    changeInfo
 }
