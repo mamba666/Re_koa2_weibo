@@ -1,14 +1,13 @@
 /**
  * @description 用户数据模型
  * @author edison
- * @module db/seq.js
  */
 
-
-const seq=require("../seq")
+const seq = require('../seq')
 const { STRING, DECIMAL } = require('../types')
 
-const User=seq.define("user",{
+// users
+const User = seq.define('user', {
     userName: {
         type: STRING,
         allowNull: false,
@@ -40,3 +39,5 @@ const User=seq.define("user",{
         comment: '城市'
     }
 })
+
+module.exports = User

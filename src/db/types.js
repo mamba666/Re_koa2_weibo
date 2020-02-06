@@ -1,5 +1,5 @@
 /**
- * @description 封装 sequelize 数据类型,在用户表中可以直接使用
+ * @description 封装 sequelize 数据类型
  * @author edison
  */
 

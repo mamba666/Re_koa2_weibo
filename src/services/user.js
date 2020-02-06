@@ -4,37 +4,40 @@
  */
 
 // 引用用户数据模型
-const {User}=require("db/model/index")
+const {User}=require("../db/model/index")
+const {formatUser}=require("./_format")
 
 
 /**
  * 获取用户信息
- * @param {string} userName 
- * @param {string} password 
- * @description 不只是用于isExist
+ * @param {string} userName 用户名
+ * @param {string} password 密码
  */
-async function getUserInfo(userName,password){
-    //查询条件
-    const whereOpt={
+async function getUserInfo(userName, password) {
+    // 查询条件
+    const whereOpt = {
         userName
     }
-    if(password){
-        Object.assign(whereOpt,{password})
+    if (password) {
+        Object.assign(whereOpt, { password })
     }
 
-    //查询
-    const result=await User.findOne({
-        attributes:["id","userName","nickName","picture","city"],
-        where:whereOpt
+    // 查询
+    const result = await User.findOne({
+        attributes: ['id', 'userName', 'nickName', 'picture', 'city'],
+        where: whereOpt
     })
-    if(result==null){
-        //未找到
+    if (result == null) {
+        // 未找到
         return result
     }
 
-    //格式化处理
+    // 格式化
+    const formatRes = formatUser(result.dataValues)
 
-    return result.dataValues
+    return formatRes
 }
 
-module.exports=getUserInfo
+module.exports={
+    getUserInfo
+}

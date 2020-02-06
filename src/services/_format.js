@@ -3,6 +3,7 @@
  * @author edison
  */
 
+const {DEFAULT_PICTURE}=("../conf/constant")
 
 /**
  * 用户默认头像
@@ -11,7 +12,7 @@
  */
 function _formatUserPicture(obj){
     if(obj.picture==null){
-        obj.picture="https://s2.ax1x.com/2020/02/06/1y13t0.jpg"
+        obj.picture=DEFAULT_PICTURE
     }
     return obj
 }
