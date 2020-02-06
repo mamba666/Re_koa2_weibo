@@ -3,13 +3,14 @@
  * @author edison
  */
 
-const {getUserInfo,createUser}=require("../services/user")
+const {getUserInfo,createUser,deleteUser}=require("../services/user")
 const {SuccessModel,ErrorModel}=require("../model/ResModel")
 const {
     registerUserNameNotExistInfo,
     registerUserNameExistInfo,
     registerFailInfo,
-    loginFailInfo
+    loginFailInfo,
+    deleteUserFailInfo
 }=require("../model/ErrorInfo")
 const doCrypto=require("../utils/cryp")
 
@@ -81,8 +82,22 @@ async function login(ctx,userName,password){
     return new SuccessModel()
 }
 
+/**
+ * 删除用户
+ * @param {string} userName 通过session获取的当前用户
+ */
+async function deleteCurUser(userName){
+    // 因为删除时已经登录了，所以不需要获取用户信息
+    const result=await deleteUser(userName)
+    if(result){
+        return new SuccessModel()
+    }
+    return new ErrorModel(deleteUserFailInfo)
+}
+
 module.exports={
     isExist,
     register,
-    login
+    login,
+    deleteCurUser
 }
