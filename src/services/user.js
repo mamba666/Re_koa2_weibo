@@ -38,6 +38,22 @@ async function getUserInfo(userName, password) {
     return formatRes
 }
 
+/**
+ * 因为这里是services层，所以只要管好数据层面就行，这也是为社么传入这么参数的原因
+ * @param {string|number} param0 userName,password,gender,nickName
+ */
+async function createUser({userName,password,gender=3,nickName}){
+    const result=await User.create({
+        userName,
+        password,
+        // 防止不传昵称
+        nickName:nickName?nickName:userName,
+        gender
+    })
+    return result.dataValues
+}
+
 module.exports={
-    getUserInfo
+    getUserInfo,
+    createUser
 }

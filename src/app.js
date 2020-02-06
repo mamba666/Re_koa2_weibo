@@ -10,6 +10,7 @@ const redisStore = require('koa-redis')
 
 const {REDIS_CONF}=require("./conf/db")
 const { isProd } = require('./utils/env')
+const { SESSION_SECRET_KEY } = require('./conf/secretKeys')
 
 const index = require('./routes/index')
 const userAPIRouter = require('./routes/api/user')
@@ -40,7 +41,7 @@ app.use(views(__dirname + '/views', {
 //koa2配置session
 //session如果不手动去使用的话，就不会去启用redis服务器
 //这是密钥，因为需要将cookie传进来的信息加密
-app.keys=["UIsdf_7878#$"]
+app.keys=[SESSION_SECRET_KEY]
 app.use(session({
   //设置cookie的name，默认是koa.sid
   key:"weibo.sid",
