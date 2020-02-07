@@ -99,6 +99,7 @@ async function deleteCurUser(userName) {
     }
 
 /**
+ * 修改用户信息
  * @description ctx传进来是因为修改了用户信息也需要更改session
  * @param {Object} ctx 
  * @param {string} param1 nickName,city,picture
@@ -156,11 +157,22 @@ async function changePassword(userName,password,newPassword){
     return new ErrorModel(changePasswordFailInfo)
 }
 
+/**
+ * 退出登录
+ * @description 核心逻辑就是删除session
+ * @param {Object} ctx 
+ */
+async function logout(ctx){
+    delete ctx.session.userInfo
+    return new SuccessModel()
+}
+
 module.exports={
     isExist,
     register,
     login,
     deleteCurUser,
     changeInfo,
-    changePassword
+    changePassword,
+    logout
 }
