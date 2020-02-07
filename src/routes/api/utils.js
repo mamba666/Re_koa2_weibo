@@ -18,6 +18,9 @@ const options = {
 router.post('/upload',loginCheck,koaForm(options),async(ctx,next)=>{
     // file是my-ajax里面自己定义的
     const file=ctx.req.files['file']
+    if(!file){
+        return
+    }
     const {size,path,name,type}=file
 
     ctx.body=await saveFile({
