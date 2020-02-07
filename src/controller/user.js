@@ -11,7 +11,8 @@ const {
     registerFailInfo,
     loginFailInfo,
     deleteUserFailInfo,
-    changeInfoFailInfo
+    changeInfoFailInfo,
+    changePasswordFailInfo
 }=require("../model/ErrorInfo")
 const doCrypto=require("../utils/cryp")
 
@@ -99,11 +100,11 @@ async function deleteCurUser(userName) {
 
 /**
  * @description ctx传进来是因为修改了用户信息也需要更改session
- * @param {object} ctx 
+ * @param {Object} ctx 
  * @param {string} param1 nickName,city,picture
  */
 async function changeInfo(ctx,{nickName,city,picture}){
-    // 既然是修改个人信息,那么也需要直到修改的是谁的个人信息
+    // 既然是修改个人信息,那么也需要知道修改的是谁的个人信息
     // controller的业务逻辑
     const {userName}=ctx.session.userInfo
     if(!nickName){
@@ -130,11 +131,36 @@ async function changeInfo(ctx,{nickName,city,picture}){
     return new ErrorModel(changeInfoFailInfo)
 }
 
+/**
+ * 修改密码
+ * @description 修改密码和修改信息都是修改,而修改基本信息获取userName是为了在数据库操作时传入一个执行的条件
+ * @param {string} userName 
+ * @param {string} password 
+ * @param {string} newPassword 
+ */
+async function changePassword(userName,password,newPassword){
+    const result=await updateUser(
+        {
+            //修改的内容
+            newPassword:doCrypto(newPassword)
+        },
+        {
+            // 执行的条件
+            userName,
+            password:doCrypto(password)
+        }
+    )
+    if(result){
+        return new SuccessModel
+    }
+    return new ErrorModel(changePasswordFailInfo)
+}
 
 module.exports={
     isExist,
     register,
     login,
     deleteCurUser,
-    changeInfo
+    changeInfo,
+    changePassword
 }
