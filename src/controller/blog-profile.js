@@ -5,7 +5,6 @@
 
 const {getBlogListByUser}=require("../services/blog")
 const {SuccessModel,ErrorModel}=require("../model/ResModel")
-const {}=require("../model/ErrorInfo")
 
 /**
  * 获取个人主页微博列表

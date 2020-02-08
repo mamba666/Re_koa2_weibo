@@ -8,52 +8,112 @@ const { loginRedirect } = require('../../middlewares/loginChecks')
 const { getProfileBlogList } = require('../../controller/blog-profile')
 const { getSquareBlogList } = require('../../controller/blog-square')
 const { isExist } = require('../../controller/user')
+const { getFans, getFollowers } = require('../../controller/user-relation')
+const { getHomeBlogList } = require('../../controller/blog-home')
+
 // 首页
-router.get('/',loginRedirect,async(ctx,next)=>{
-    await ctx.render('index',{})
+router.get('/', loginRedirect, async (ctx, next) => {
+    const userInfo = ctx.session.userInfo
+    const { id: userId } = userInfo
+
+    // 获取第一页数据
+    const result = await getHomeBlogList(userId)
+    const { isEmpty, blogList, pageSize, pageIndex, count } = result.data
+
+    // 获取粉丝
+    const fansResult = await getFans(userId)
+    const { count: fansCount, fansList } = fansResult.data
+
+    // 获取关注人列表
+    const followersResult = await getFollowers(userId)
+    const { count: followersCount, followersList } = followersResult.data
+
+    await ctx.render('index', {
+        userData: {
+            userInfo,
+            fansData: {
+                count: fansCount,
+                list: fansList
+            },
+            followersData: {
+                count: followersCount,
+                list: followersList
+            }
+        },
+        blogData: {
+            isEmpty,
+            blogList,
+            pageSize,
+            pageIndex,
+            count
+        }
+    })
 })
 
-
-//个人主页
-// 第一个路由的场景是防止已经登录的人进入个人主页,
-// 然后通过session找出这个人的userName,然后进行跳转
-router.get('/profile',loginRedirect,async(ctx,next)=>{
-    const {userName}=ctx.session.userInfo
-    ctx.redirect(`profile/${userName}`)
+// 个人主页
+router.get('/profile', loginRedirect, async (ctx, next) => {
+    const { userName } = ctx.session.userInfo
+    ctx.redirect(`/profile/${userName}`)
 })
-router.get('/profile/:userName',loginRedirect,async(ctx,next)=>{
+router.get('/profile/:userName', loginRedirect, async (ctx, next) => {
     // 已登录用户的信息
-    const myUserInfo=ctx.session.userInfo
-    const myUserName=myUserInfo.userName
+    const myUserInfo = ctx.session.userInfo
+    const myUserName = myUserInfo.userName
 
     let curUserInfo
-    const {userName:curUserName}=ctx.params
-    // 如果当前访问用户和已登录用户是一个人,就说明访问的是自己的主页
-    const isMe=myUserName===curUserName
-    if(isMe){
+    const { userName: curUserName } = ctx.params
+    const isMe = myUserName === curUserName
+    if (isMe) {
+        // 是当前登录用户
         curUserInfo = myUserInfo
-    }else{
-        const existResult=await isExist(curUserName)
-        if(existResult.errno!==0){
-            return 
+    } else {
+        // 不是当前登录用户
+        const existResult = await isExist(curUserName)
+        if (existResult.errno !== 0) {
+            // 用户名不存在
+            return
         }
-        curUserInfo=existResult.data
+        // 用户名存在
+        curUserInfo = existResult.data
     }
 
     // 获取微博第一页数据
-    const result=await getProfileBlogList(curUserName,0)
-    const {isEmpty,blogList,pageSize,pageIndex,count}=result.data
-    await ctx.render('profile',{
-        blogData:{
+    const result = await getProfileBlogList(curUserName, 0)
+    const { isEmpty, blogList, pageSize, pageIndex, count } = result.data
+
+    // 获取粉丝
+    const fansResult = await getFans(curUserInfo.id)
+    const { count: fansCount, fansList } = fansResult.data
+
+    // 获取关注人列表
+    const followersResult = await getFollowers(curUserInfo.id)
+    const { count: followersCount, followersList } = followersResult.data
+
+    // 我是否关注了此人？
+    const amIFollowed = fansList.some(item => {
+        return item.userName === myUserName
+    })
+
+    await ctx.render('profile', {
+        blogData: {
             isEmpty,
             blogList,
-            pageIndex,
             pageSize,
+            pageIndex,
             count
         },
-        userData:{
-            userInfo:curUserInfo,
-            isMe
+        userData: {
+            userInfo: curUserInfo,
+            isMe,
+            fansData: {
+                count: fansCount,
+                list: fansList
+            },
+            followersData: {
+                count: followersCount,
+                list: followersList
+            },
+            amIFollowed
         }
     })
 })
@@ -75,4 +135,4 @@ router.get('/square', loginRedirect, async (ctx, next) => {
     })
 })
 
-module.exports=router
+module.exports = router
