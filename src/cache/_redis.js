@@ -5,52 +5,50 @@
  * @author edison
  */
 
-const redis=require("redis")
-const REDIS_CONF=require("../conf/db")
+const redis = require('redis')
+const { REDIS_CONF } = require('../conf/db')
 
-//创建redis客户端
-const redisClient=redis.createClient(REDIS_CONF.port,REDIS_CONF.host)
-redisClient.on("error",err=>{
-    console.error("redis error",err)
+// 创建客户端
+const redisClient = redis.createClient(REDIS_CONF.port, REDIS_CONF.host)
+redisClient.on('error', err => {
+    console.error('redis error', err)
 })
 
 /**
  * redis set
- * @param {string} key 
- * @param {string} val 
- * @param {number} timeout 单位：秒
- * @description set进去的全部设置为字符串形式
+ * @param {string} key 键
+ * @param {string} val 值
+ * @param {number} timeout 过期时间，单位 s
  */
-function set(key,val,timeout=60*60){
-    if(typeof val==="object"){
-        //变成字符串类型
-        val=JSON.stringify(val)
+function set(key, val, timeout = 60 * 60) {
+    if (typeof val === 'object') {
+        val = JSON.stringify(val)
     }
-    redisClient.set(key.val)
-    redisClient.expire(key,timeout)
+    redisClient.set(key, val)
+    redisClient.expire(key, timeout)
 }
 
 /**
  * redis get
- * @param {string} key 
+ * @param {string} key 键
  */
-function gey(key){
-    const promise=new promise((resolve,reject)=>{
-        redisClient.get(key,(err,val)=>{
-            if(err){
+function get(key) {
+    const promise = new Promise((resolve, reject) => {
+        redisClient.get(key, (err, val) => {
+            if (err) {
                 reject(err)
                 return
             }
-            if(val==null){
+            if (val == null) {
                 resolve(null)
                 return
             }
-            try{
-                // 万一是json类型
+
+            try {
                 resolve(
                     JSON.parse(val)
                 )
-            }catch(ex){
+            } catch (ex) {
                 resolve(val)
             }
         })
@@ -58,7 +56,7 @@ function gey(key){
     return promise
 }
 
-module.exports={
+module.exports = {
     set,
     get
 }
